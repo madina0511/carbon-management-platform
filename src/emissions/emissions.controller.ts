@@ -1,4 +1,4 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, Query } from '@nestjs/common';
 import { EmissionsService } from './emissions.service';
 
 @Controller('emissions')
@@ -6,8 +6,8 @@ export class EmissionsController {
   constructor(private readonly emissionsService: EmissionsService) {}
 
   @Get()
-  async getAllEmissions() {
-    return this.emissionsService.getAllEmissions();
+  getAllEmissions(@Query('uploadId') uploadId?: string) {
+    return this.emissionsService.getAllEmissions(uploadId);
   }
 
   @Get('summary')
