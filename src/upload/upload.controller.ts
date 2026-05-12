@@ -8,12 +8,14 @@ import {
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import * as XLSX from 'xlsx';
+import { PrismaService } from '../prisma/prisma.service';
 
 @Controller('upload')
 export class UploadController {
+  constructor(private readonly prisma: PrismaService) {}
   @Post('excel')
   @UseInterceptors(FileInterceptor('file'))
-  uploadExcel(@UploadedFile() file: any) {
+  async uploadExcel(@UploadedFile() file: any) {
     try {
       if (!file) {
         throw new BadRequestException('Excel file is required');
@@ -57,6 +59,25 @@ export class UploadController {
           emission,
         };
       });
+      const recordsToSave = calculatedData.map((item) => ({
+        date: item.date ? new Date(item.date) : new Date(),
+        activityType: item.activityType,
+        description: item.description,
+        amount: item.amount,
+        unit: item.unit,
+        emissionFactor: item.factor,
+        emission: item.emission,
+        scope:
+          item.activityType === '전기'
+            ? 'Scope 2'
+            : item.activityType === '운송'
+              ? 'Scope 3'
+              : 'Scope 1',
+      }));
+      await this.prisma.emissionRecord.deleteMany();
+      await this.prisma.emissionRecord.createMany({
+        data: recordsToSave,
+      });
 
       return {
         message: 'Excel uploaded successfully',
@@ -65,7 +86,9 @@ export class UploadController {
       };
     } catch (error) {
       console.error(error);
-
+      if (error instanceof BadRequestException) {
+        throw error;
+      }
       throw new InternalServerErrorException('Failed to process Excel file');
     }
   }
