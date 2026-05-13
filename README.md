@@ -38,6 +38,44 @@
 
 ---
 
+## 📊 ERD (Entity Relationship Diagram)
+
+```mermaid
+erDiagram
+    Upload {
+        Int id PK
+        String fileName
+        DateTime createdAt
+    }
+
+    EmissionRecord {
+        Int id PK
+        DateTime date
+        String activityType
+        String description
+        Float amount
+        String unit
+        Float emissionFactor
+        Float emission
+        String scope
+        Int uploadId FK
+        DateTime createdAt
+    }
+
+    EmissionFactor {
+        Int id PK
+        String activityType
+        String description
+        String unit
+        Float factor
+        String scope
+        DateTime createdAt
+    }
+
+    Upload ||--o{ EmissionRecord : "has many"
+    EmissionFactor ||--o{ EmissionRecord : "references"
+```
+
 ## 🏗️ 시스템 설계
 
 ### 기술 스택
