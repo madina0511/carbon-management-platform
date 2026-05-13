@@ -4,9 +4,10 @@ import { MulterModule } from '@nestjs/platform-express';
 import { UploadController } from './upload.controller';
 import { UploadService } from './upload.service';
 import { PrismaModule } from '../prisma/prisma.module';
+import { AiModule } from 'src/ai/ai.module';
 
 @Module({
-  imports: [MulterModule.register({}), PrismaModule],
+  imports: [MulterModule.register({}), PrismaModule, AiModule],
   controllers: [UploadController],
   providers: [UploadService],
 })
