@@ -19,10 +19,11 @@ export class EmissionsService {
     }
   }
 
-  async getSummary() {
+  async getSummary(uploadId?: number) {
     try {
-      const emissions = await this.prisma.emissionRecord.findMany();
-
+      const emissions = await this.prisma.emissionRecord.findMany({
+        where: uploadId ? { uploadId } : undefined,
+      });
       const totalEmission = emissions.reduce(
         (sum, item) => sum + item.emission,
         0,

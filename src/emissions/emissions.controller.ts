@@ -9,9 +9,10 @@ export class EmissionsController {
   getAllEmissions(@Query('uploadId') uploadId?: string) {
     return this.emissionsService.getAllEmissions(uploadId);
   }
-
   @Get('summary')
-  async getSummary() {
-    return this.emissionsService.getSummary();
+  getSummary(@Query('uploadId') uploadId?: string) {
+    return this.emissionsService.getSummary(
+      uploadId ? parseInt(uploadId) : undefined,
+    );
   }
 }
